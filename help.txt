@@ -28,7 +28,7 @@ node index psql/users.psql
 Backup and Restore  with the following commands:
 
 // Backup via dump All
- docker exec -t local-postgres -pg_dumpall -c -U admin> dump_`date +%d-%m-%Y"_"%H_%M_%S`.psql
+ docker exec -i local-postgres pg_dumpall -c -U admin > dump_`date +%d-%m-%Y"_"%H_%M`.psql
 // restore all
- cat dump.psql | docker exec -i local-postgrespsql -d test_db -U admin
+ cat dump.psql | docker exec -i local-postgres psql -d test_db -U admin 
 

@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS cities (
+id serial,
+  city varchar(80));
+
+INSERT INTO cities ( city) VALUES ('St. Louis, Missouri'),('New York, NY'), ('Los Angelos, California'), ( 'Paris, France'), ('London, England');
+
+
