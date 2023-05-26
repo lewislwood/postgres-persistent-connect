@@ -1,0 +1,23 @@
+
+This is the wonderful article I used as a resource in creating my version of
+it utilizing Docker-Compose.yml and Persistent database.
+  This example is so simple and easy to create and understand.
+
+
+https://dev.to/mohsenkamrani/run-postgresql-with-docker-locally-and-connect-to-it-with-nodejs-451g#main-content
+
+This article used the docker run command which I converted into a docker-compose.yml Then added more features.
+$ docker run --name local-postgres -p 5432:5432 -e POSTGRES_PASSWORD=mypassword -e POSTGRES_USER=admin -d postgres
+
+ docker run --name local-postgres -p 5432:5432 -e POSTGRES_PASSWORD=mypassword -e POSTGRES_USER=admin -d postgres
+
+
+docker exec -ti local-postgres bash
+
+psql -U admin
+psql -U admin  -d postgres
+
+CREATE DATABASE test_db;
+
+
+

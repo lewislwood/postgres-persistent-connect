@@ -1,0 +1,18 @@
+# docker-compose.yml
+version: '3.1'
+services:
+  db:
+  # container_name will allow us to easily reference it without the long id value
+    container_name: local-postgres 
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin 
+      POSTGRES_PASSWORD: mypassword 
+      POSTGRES_DB: test_db
+      
+    ports:
+       - 5432:5432
+    volumes:
+    #  This will persist the database in a data folder created by docker
+       - ./data:/var/lib/postgresql/data

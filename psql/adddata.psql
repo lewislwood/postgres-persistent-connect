@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT exists users (
+       id serial,
+        name varchar(120));
+        INSERt INTO users ( name) VALUES ('Lewis Wood'), ('Rick & Morty'), ('Tom & Jerry'); 
+
+        select name from users;

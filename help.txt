@@ -1,0 +1,25 @@
+
+
+docker-compose up -d
+
+*** If you want to add data prior to running  **
+docker exec -ti local-postgres bash
+
+psql -U admin -d test_db
+ Run psql file with the command below in the psql prompt
+ test_db# \i adddata.psql
+ *** Now you have some data
+
+**** Now exit psql and bash prompt  with the following:
+test_db# \q
+docker$ exit       // exits the docker container bash prompt. You will need to do itial install of npm files, this is one time command
+$ npm install       // Now all needed nodejs modules will be installed
+
+** Now you can run the project
+$ npm run start
+Now you can run the various psql files stored in the psql folder.  Feel free to write your own.
+
+node index psql/users.psql
+
+
+
