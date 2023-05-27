@@ -1,0 +1,172 @@
+<h1>Really simple Postgresql server</h1>
+
+<p>This docker containerized server is up and running in seconds.  Has the features any good developer demands:</p>
+
+<ol>
+<li><p>Quick and Easy to setup</p></li>
+<li><p>Persistent data.  Data sticks around even after container is destoyed.</p></li>
+<li><p>Easy to Backup and Resotre</p></li>
+<li><p>Runs psql command line and you can quickly develop and test your sql.</p></li>
+</ol>
+
+<p>This little simple javascript console app (index.js). Illustrates an easy way to connect to this new database. Even accepts a parameter for a psql file, that it will run against the server.</p>
+
+<p>The Postgresql server is created from one file (docker-compose.yml). This yml file will run the server with a container name for easy reference (instead of that long container id).  It maps a volume to a data folder in the current directory. Warning Docker creates this file, so do not create it yourself.  Also maps a port 5432 from inside to 5432 in your local 
+computer.  You change the port number on the left side to have your apps access it from  different local port. This can be handy if you are running 3 local istes locally with 3 different postgresql servers.  Example - 5451:5432  on site 2 5452:5432, ... </p>
+
+<p>you can choose your own container name, port.  local-postgres is just the name for this starter. I personally will be using shorter names without the "-" for myself.</p>
+
+<h2>Start Server</h2>
+
+<pre><code> $ docker-compose up -d
+</code></pre>
+
+<p>The above command will tell dockerto download the the latest postgresql server image file. Then it will create a running containter named local-postgres on port 5432.  That's it!</p>
+
+<p>To stop the docker container:
+ $ docker-compose stop</p>
+
+<p>This will keep the container for you to use again at a later time.</p>
+
+<p>To estroy the container .</p>
+
+<pre><code> $ docker-compose down
+</code></pre>
+
+<p>You can also destroy it from anywhere on your computer by removing it by container name:</p>
+
+<pre><code>$ docker rm local-postgres -f
+</code></pre>
+
+<p>The -f forces it to be removed, even if it is running.</p>
+
+<p>Do not worry regardless the data is still present and can be spun up again with all the data contined in the Postgresql server database.:</p>
+
+<pre><code>  docker-compose up -d
+</code></pre>
+
+<h2>Sample psql files</h2>
+
+<p>Inside the psql folder you will find a few psql files.  You can run any of these as follows.  Keep in mind the database has only test_db and no tables when first created.</p>
+
+<p>You can add data in multiple ways. I present 3 ways  for your convenience.</p>
+
+<ol>
+<li><p>run enclosed app with the provided psql/*.psql files. </p></li>
+<li><p>psql to run the sql files and/or  manual queries.</p></li>
+<li><p>restore //One backup (dump*.psql) file is provided.</p></li>
+</ol>
+
+<h3>Console app running it.</h3>
+
+<p>This console app can add the data and verify your postgresql server is running.</p>
+
+<p>A one ime step is to install the program dependencies.</p>
+
+<pre><code>$ npm install
+</code></pre>
+
+<p>The above command will install all depencies for this console app. </p>
+
+<p>Once installed and postgres server is runing. You can run this console app.</p>
+
+<pre><code>$ npm run start
+</code></pre>
+
+<p>This runs the app with no parameters and uses the default query.  { SELECT NOW()}. This just displays the server time. This proves the server is up and running.</p>
+
+<p>Now you are ready to run queries with this console app. Now in order to input parameters into the console app you will have a different command to run.:</p>
+
+<pre><code>$ node index.js [psql file]
+</code></pre>
+
+<h2>Adding data via console app</h2>
+
+<p>I provided numerous psql files in the psql folder for you to test. Feel free to write your own.</p>
+
+<pre><code>$ node index.js psql/adddata.psql
+</code></pre>
+
+<p>The above will create the users table if need be and add users to the table. Run the users query to verify they were added.</p>
+
+<pre><code>$ node index users.psql
+</code></pre>
+
+<h2>Adding data via PSQL prompt</h2>
+
+<p>This way you can run psql queries I wrote or you can manually type in. First thing you will have to do is start the docker container command shell prompt:</p>
+
+<pre><code>$ docker -it local-postgres bash
+</code></pre>
+
+<p>The above command opens the conatiner and places you inside the shell.  Bash is the default shell for linux based containers. </p>
+
+<p>Now you can run other commands, and in our case we want to start psql prompt.
+    $ psql -Uadmin -d test_db</p>
+
+<p>The above psql will open the psql prompt for the test_db that our yml file created earlier.   We use the capital letter "U" parameter and  enter our user id "admin".  If we had named the db in the yml admin, this would not be neccessary, since psql opens the users database as a default.</p>
+
+<p>Now you can manually type in psql commands for example:</p>
+
+<pre><code>test_db# SELECT NOW();
+</code></pre>
+
+<p>Above query displays time and date.  Notice all querys must end with ";".</p>
+
+<p>Now if you want to run the psql files I provide ou will need to do the following:</p>
+
+<p>Open another terminal and type int ehe following:
+     $ docker cp *.psql local-postgres:.</p>
+
+<p>The above will copy all your psql files into your container.  Now you can run the queries from the psql prompt.  You may have wanted to create a create sub folder for organization sake. In the earlier docker bash command shell. </p>
+
+<p>Now enter the psql quiry in the other terminal:</p>
+
+<pre><code> test_db# \i adddata.psql
+</code></pre>
+
+<p>This will run the psql query found in the container.  The \i means input file. No need for simicolon for the "\" commands.</p>
+
+<p>##  Restoring from a backup file</p>
+
+<p>One dump<em>.sql file is provided for you to restore from. You can use this to restore the test_db to the state I backed it up.  You will find it has users, but no cities. This was done purposely, so that you can see and verify it as well. You will find  the command in the backup.txt and the dump</em>.sql files in the backup folder.  The backup.txt has the command below:</p>
+
+<pre><code>$ cat dump.psql | docker exec -i local-postgres psql -d test_db -U admin
+</code></pre>
+
+<p>Now to run the above command you will need to be in the backup folder or adjust the command appropiately.  Also you will need to ren the dump_date-time.psql file to dump.psql.  I did this for simpicity sake. Here is another approach you may consider and may be faster for large databases restore.</p>
+
+<pre><code>$ docker exec -it local-postgres bash
+</code></pre>
+
+<p>```root$ mkdir psql
+ <em>*</em>* Another terminal</p>
+
+<pre><code> $docker cp dump.psql local-postgres:psql/.
+
+root$ cd psql
+root$ psql -d test_db -U admin
+</code></pre>
+
+<p>test_db# \i dump.psql</p>
+
+<p>Now you are running the restory command from inside the container without piping the file to the psql via cat command.</p>
+
+<p>You create backups with the following command found in the backup.txt file as well.</p>
+
+<pre><code>docker exec -i local-postgres pg_dumpall -c -U admin &gt; dump_`date +%d-%m-%Y"_"%H_%M`.psql
+</code></pre>
+
+<h2>Resources and references</h2>
+
+<p>You can find my repository at the folowing:
+<a href="http://github.com/lewislwood/postgresql-persistent-connect">postgresql-persistent-connect</a></p>
+
+<p>My inspiration for this repository can be found in the old folder. A simpler and even easier format to understand. Also a much better writer than myself.
+<a href="https://dev.to/mohsenkamrani/run-postgresql-with-docker-locally-and-connect-to-it-with-nodejs-451g#main-content">run-postgresql-with-docker-locally-and-connect</a></p>
+
+<p>I hope you found this repository and article  a good resources.  You can find my website at:</p>
+
+<p><a href="http://blindheroes.org">Blind Heroes</a></p>
+
+<p>This is currently in WordPress and will soon be switching to Express, which I prefer.  Sty tuned.</p>
